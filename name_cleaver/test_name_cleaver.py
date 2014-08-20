@@ -144,13 +144,15 @@ class TestOrganizationNameCleaver(unittest.TestCase):
     def test_dont_strip_after_hyphens_too_soon_in_a_name(self):
         self.assertEqual('US-Russia Business Council', OrganizationNameCleaver('US-Russia Business Council').parse().kernel())
         self.assertEqual('Wal-Mart Stores', OrganizationNameCleaver('Wal-Mart Stores, Inc.').parse().kernel())
+        self.assertEqual('Williams-Sonoma', OrganizationNameCleaver('Williams-Sonoma, Inc.').parse().kernel())
+        self.assertEqual('Austin American-Statesman', OrganizationNameCleaver('Austin American-Statesman').parse().kernel())
 
         # these were new after the hyphen rewrite
         self.assertEqual('Coca-Cola Company', OrganizationNameCleaver('Coca-Cola Co').parse().expand()) # used to return 'Coca'
         self.assertEqual('Rolls-Royce PLC', OrganizationNameCleaver('Rolls-Royce PLC').parse().expand()) # used to return 'Rolls'
 
     def test_drop_postname_hyphen_phrases(self):
-        self.assertEqual('Lawyers For Better Government', OrganizationNameCleaver('LAWYERS FOR BETTER GOVERNMENT-ILLINOIS').parse().without_extra_phrases())
+        self.assertEqual('Lawyers For Better Government-Illinois', OrganizationNameCleaver('LAWYERS FOR BETTER GOVERNMENT-ILLINOIS').parse().without_extra_phrases())
         self.assertEqual('Jobs Opportunity And Freedom Political Action Committee', OrganizationNameCleaver('JOBS OPPORTUNITY AND FREEDOM POLITICAL ACTION COMMITTEE - JOFPAC').parse().without_extra_phrases())
 
     def test_kernel(self):
