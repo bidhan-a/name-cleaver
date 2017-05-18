@@ -14,6 +14,9 @@ setup(
     author_email='arowland@sunlightfoundation.com',
     url='http://github.com/sunlightlabs/name-cleaver/',
     packages=find_packages(),
+    install_requires=[
+        'future',
+    ],
     license='BSD License',
     platforms=["any"],
     classifiers=[
