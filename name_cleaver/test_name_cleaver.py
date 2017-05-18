@@ -1,5 +1,6 @@
 from cleaver import PoliticianNameCleaver, OrganizationNameCleaver, \
     IndividualNameCleaver, UnparseableNameException
+from builtins import str
 
 try:
     import unittest2 as unittest
@@ -114,7 +115,7 @@ class TestPoliticianNameCleaver(unittest.TestCase):
         self.assertEqual(['Van', 'Morrison'], PoliticianNameCleaver('Van Morrison').parse().primary_name_parts())
 
     def test_alternate_running_mates_format(self):
-        self.assertEqual('Obama/Biden 2012', str(PoliticianNameCleaver('2012, Obama/Biden').parse()))
+        self.assertEqual('Obama 2012 & Biden', str(PoliticianNameCleaver('2012, Obama/Biden').parse()))
 
     def test_alternate_punctuation(self):
         self.assertEqual('Charles W. Boustany, Jr.', str(PoliticianNameCleaver('Charles W. Boustany Jr.').parse()))
@@ -303,28 +304,28 @@ class TestOrganizationNameCleaverForIndustries(unittest.TestCase):
 
 class TestUnicode(unittest.TestCase):
     def test_individual(self):
-        self.assertEqual(u'Tobias F\u00fcnke'.encode('utf-8'),
+        self.assertEqual(u'Tobias F\u00fcnke',
                          str(IndividualNameCleaver(u'F\u00fcnke, Tobias').parse()))
 
     def test_politician(self):
-        self.assertEqual(u'Tobias F\u00fcnke'.encode('utf-8'),
+        self.assertEqual(u'Tobias F\u00fcnke',
                          str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse()))
 
     def test_politician_plus_metadata(self):
-        self.assertEqual(u'Tobias F\u00fcnke (D-CA)'.encode('utf-8'),
+        self.assertEqual(u'Tobias F\u00fcnke (D-CA)',
                          str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse().plus_metadata('D', 'CA')))
 
     def test_politician_running_mates(self):
-        self.assertEqual(u'Tobias F\u00fcnke & Lindsay F\u00fcnke'.encode('utf-8'),
+        self.assertEqual(u'Tobias F\u00fcnke & Lindsay F\u00fcnke',
                          str(PoliticianNameCleaver(u'F\u00fcnke, Tobias & F\u00fcnke, Lindsay').parse()))
 
     def test_running_mates_with_metadata(self):
-        self.assertEqual(u'Ted Strickland & Le\u00e9 Fischer (D-OH)'.encode('utf-8'),
+        self.assertEqual(u'Ted Strickland & Le\u00e9 Fischer (D-OH)',
                          str(PoliticianNameCleaver(u'STRICKLAND, TED & FISCHER, LE\u00c9').parse().plus_metadata('D',
                                                                                                                  'OH')))
 
     def test_organization(self):
-        self.assertEqual(u'\u00C6tna, Inc.'.encode('utf-8'),
+        self.assertEqual(u'\u00C6tna, Inc.',
                          str(OrganizationNameCleaver(u'\u00C6tna, Inc.').parse()))
 
 

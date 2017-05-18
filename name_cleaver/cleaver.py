@@ -3,6 +3,7 @@ from exception import UnparseableNameException
 from names import SUFFIX_RE, DEGREE_RE, PersonName, PoliticianName, RunningMatesNames, \
     OrganizationName
 from nicknames import NICKNAMES
+from builtins import str
 
 
 class BaseNameCleaver(object):
@@ -47,7 +48,7 @@ class IndividualNameCleaver(BaseNameCleaver):
 
                 name = self.reverse_last_first(name)
                 self.name = self.convert_name_to_obj(name, nick, honorific, suffix)
-            except Exception, e:
+            except Exception as e:
                 return self.cannot_parse(safe, e)
             finally:
                 if isinstance(self.name, self.object_class) and self.name.last:
@@ -207,7 +208,7 @@ class PoliticianNameCleaver(IndividualNameCleaver):
             try:
                 self.strip_party()
                 self.name = self.convert_name_to_obj(self.name)  # important for "last, first", and also running mates
-            except Exception, e:
+            except Exception as e:
                 return self.cannot_parse(safe, e)
             finally:
                 if (isinstance(self.name, self.object_class) and self.name.last) or isinstance(self.name,
@@ -231,7 +232,7 @@ class PoliticianNameCleaver(IndividualNameCleaver):
         return self.get_object_class().new_from_tokens(*[x for x in re.split('\s+', name) if x])
 
     def convert_running_mates_names_to_obj(self, name):
-        return RunningMatesNames(*[self.convert_name_to_obj(x) for x in re.split(' [&/] ', name)])
+        return RunningMatesNames(*[self.convert_name_to_obj(x) for x in re.split('[&/]', name)])
 
 
 class OrganizationNameCleaver(BaseNameCleaver):
@@ -248,7 +249,7 @@ class OrganizationNameCleaver(BaseNameCleaver):
             self.name = self.name.strip()
 
             self.name = self.get_object_class().new(self.name)
-        except Exception, e:
+        except Exception as e:
             return self.cannot_parse(safe, e)
         finally:
             if isinstance(self.name, self.object_class):

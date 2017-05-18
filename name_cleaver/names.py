@@ -1,4 +1,6 @@
 import re
+from builtins import str
+from future.utils import python_2_unicode_compatible
 
 DEGREE_RE = 'j\.?d\.?|m\.?d\.?|ph\.?d\.?'
 SUFFIX_RE = '([js]r\.?|%s|[IVX]{2,})' % DEGREE_RE
@@ -91,11 +93,8 @@ class OrganizationName(Name):
     def primary_name_parts(self):
         return [self.without_extra_phrases()]
 
-    def __unicode__(self):
-        return unicode(self.name)
-
     def __str__(self):
-        return unicode(self.name).encode('utf-8')
+        return self.name
 
     def without_extra_phrases(self):
         """Removes parenthetical and dashed phrases"""
@@ -132,7 +131,7 @@ class OrganizationName(Name):
 
     def kernel(self):
         """ The 'kernel' is an attempt to get at just the most pithy words in the name """
-        stop_words = [y.lower() for y in self.abbreviations.values() + self.filler_words]
+        stop_words = [y.lower() for y in list(self.abbreviations.values()) + self.filler_words]
         kernel = ' '.join([x for x in self.expand().split() if x.lower() not in stop_words])
 
         # this is a hack to get around the fact that this is the only two-word phrase we want to block
@@ -148,6 +147,7 @@ class OrganizationName(Name):
             return ', '.join(self.kernel().split()[0:2])
 
 
+@python_2_unicode_compatible
 class PersonName(Name):
     honorific = None
     first = None
@@ -271,11 +271,8 @@ class PersonName(Name):
             else:
                 i += 1
 
-    def __unicode__(self):
-        return unicode(self.name_str())
-
     def __str__(self):
-        return unicode(self.name_str()).encode('utf-8')
+        return self.name_str()
 
     def name_str(self):
         return ' '.join([x.strip() for x in [
@@ -344,6 +341,7 @@ class PersonName(Name):
         return self.as_dict()
 
 
+@python_2_unicode_compatible
 class PoliticalMetadata(object):
     party = None
     state = None
@@ -358,9 +356,9 @@ class PoliticalMetadata(object):
         if self.party or self.state:
             party_state = u"-".join([x for x in [self.party, self.state] if
                                      x])  # because presidential candidates are listed without a state
-            return unicode(u"{0} ({1})".format(unicode(self.name_str()), party_state)).encode('utf-8')
+            return u"{0} ({1})".format(self.name_str(), party_state)
         else:
-            return unicode(self.name_str()).encode('utf-8')
+            return self.name_str()
 
 
 class PoliticianName(PoliticalMetadata, PersonName):
@@ -373,7 +371,7 @@ class RunningMatesNames(PoliticalMetadata):
         self.mate2 = mate2
 
     def name_str(self):
-        return u' & '.join([unicode(self.mate1), unicode(self.mate2)])
+        return u' & '.join([str(self.mate1), str(self.mate2)])
 
     def __repr__(self):
         return self.__str__()
