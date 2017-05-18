@@ -7,3 +7,6 @@ dist
 .noseids
 build/*
 .idea/
+venv.sh
+**/__pycache__/*
+virtualenvs/
