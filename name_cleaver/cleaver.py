@@ -15,7 +15,7 @@ class BaseNameCleaver(object):
             return self.orig_str
         else:
             # uncomment for debugging
-            #if e:
+            # if e:
             #   print e
             raise UnparseableNameException(u"Couldn't parse name: {0}".format(self.name))
 
@@ -33,7 +33,7 @@ class IndividualNameCleaver(BaseNameCleaver):
         if not self.orig_str:
             return ''
 
-        if not ' ' in self.name:
+        if ' ' not in self.name:
             self.name = self.get_object_class().new_from_tokens(self.name)
             return self.name.case_name_parts()
         else:
@@ -50,7 +50,7 @@ class IndividualNameCleaver(BaseNameCleaver):
             except Exception, e:
                 return self.cannot_parse(safe, e)
             finally:
-                if (isinstance(self.name, self.object_class) and self.name.last):
+                if isinstance(self.name, self.object_class) and self.name.last:
                     return self.name.case_name_parts()
                 else:
                     return self.cannot_parse(safe)
@@ -135,7 +135,8 @@ class IndividualNameCleaver(BaseNameCleaver):
     def convert_name_to_obj(self, name, nick, honorific, suffix):
         name = ' '.join([x.strip() for x in [name, nick, suffix, honorific] if x])
 
-        return self.get_object_class().new_from_tokens(*[x for x in re.split('\s+', name)], **{'allow_quoted_nicknames': True})
+        return self.get_object_class().new_from_tokens(*[x for x in re.split('\s+', name)],
+                                                       **{'allow_quoted_nicknames': True})
 
     @classmethod
     def name_processing_failed(cls, subject_name):
@@ -199,7 +200,7 @@ class PoliticianNameCleaver(IndividualNameCleaver):
         if not self.orig_str:
             return ''
 
-        if not ' ' in self.name:
+        if ' ' not in self.name:
             self.name = self.get_object_class().new_from_tokens(self.name)
             return self.name.case_name_parts()
         else:
@@ -209,7 +210,8 @@ class PoliticianNameCleaver(IndividualNameCleaver):
             except Exception, e:
                 return self.cannot_parse(safe, e)
             finally:
-                if ((isinstance(self.name, self.object_class) and self.name.last) or isinstance(self.name, RunningMatesNames)):
+                if (isinstance(self.name, self.object_class) and self.name.last) or isinstance(self.name,
+                                                                                               RunningMatesNames):
                     return self.name.case_name_parts()
                 else:
                     return self.cannot_parse(safe)

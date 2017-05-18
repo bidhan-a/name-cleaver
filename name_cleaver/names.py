@@ -3,6 +3,7 @@ import re
 DEGREE_RE = 'j\.?d\.?|m\.?d\.?|ph\.?d\.?'
 SUFFIX_RE = '([js]r\.?|%s|[IVX]{2,})' % DEGREE_RE
 
+
 class Name(object):
     scottish_re = r'(?i)\b(?P<mc>ma?c)(?!hin)(?P<first_letter>\w)\w+'
 
@@ -10,7 +11,7 @@ class Name(object):
         raise NotImplementedError("Subclasses of Name must implement primary_name_parts.")
 
     def non_empty_primary_name_parts(self):
-        return ' '.join([ x for x in self.primary_name_parts() if x ])
+        return ' '.join([x for x in self.primary_name_parts() if x])
 
     def is_mixed_case(self):
         return re.search(r'[A-Z][a-z]', self.non_empty_primary_name_parts())
@@ -39,7 +40,7 @@ class OrganizationName(Name):
         'inst': 'Institute',
         'corp': 'Corporation',
         'co': 'Company',
-        'fedn' : 'Federation',
+        'fedn': 'Federation',
         'fed': 'Federal',
         'fzco': 'Company',
         'usa': 'USA',
@@ -65,7 +66,7 @@ class OrganizationName(Name):
 
     name = None
 
-    #suffix = None
+    # suffix = None
 
     def new(self, name):
         self.name = name
@@ -77,9 +78,10 @@ class OrganizationName(Name):
             self.name = self.uppercase_the_scots(self.name)
 
             if re.match(r'(?i)^\w*PAC$', self.name):
-                self.name = self.name.upper() # if there's only one word that ends in PAC, make the whole thing uppercase
+                # if there's only one word that ends in PAC, make the whole thing uppercase
+                self.name = self.name.upper()
             else:
-                self.name = re.sub(r'(?i)\bpac\b', 'PAC', self.name) # otherwise just uppercase the PAC part
+                self.name = re.sub(r'(?i)\bpac\b', 'PAC', self.name)  # otherwise just uppercase the PAC part
 
             self.name = self.uppercase_the_scots(self.name)
             self.name = self.fix_case_for_possessives(self.name)
@@ -87,7 +89,7 @@ class OrganizationName(Name):
         return self
 
     def primary_name_parts(self):
-        return [ self.without_extra_phrases() ]
+        return [self.without_extra_phrases()]
 
     def __unicode__(self):
         return unicode(self.name)
@@ -96,13 +98,13 @@ class OrganizationName(Name):
         return unicode(self.name).encode('utf-8')
 
     def without_extra_phrases(self):
-        """Removes parenthethical and dashed phrases"""
+        """Removes parenthetical and dashed phrases"""
         # the last parenthesis is optional, because sometimes they are truncated
         name = re.sub(r'\s*\([^)]*\)?\s*$', '', self.name)
         name = re.sub(r'(?i)\s* formerly.*$', '', name)
         name = re.sub(r'(?i)\s*and its affiliates$', '', name)
         name = re.sub(r'\bet al\b', '', name)
-        
+
         # in some datasets, the name of an organization is followed by a hyphen and an abbreviated name, or a specific
         # department or geographic subdivision; we want to remove this extraneous stuff without breaking names like
         # Wal-Mart or Williams-Sonoma
@@ -130,8 +132,8 @@ class OrganizationName(Name):
 
     def kernel(self):
         """ The 'kernel' is an attempt to get at just the most pithy words in the name """
-        stop_words = [ y.lower() for y in self.abbreviations.values() + self.filler_words ]
-        kernel = ' '.join([ x for x in self.expand().split() if x.lower() not in stop_words ])
+        stop_words = [y.lower() for y in self.abbreviations.values() + self.filler_words]
+        kernel = ' '.join([x for x in self.expand().split() if x.lower() not in stop_words])
 
         # this is a hack to get around the fact that this is the only two-word phrase we want to block
         # amongst our stop words. if we end up with more, we may need a better way to do this
@@ -197,9 +199,9 @@ class PersonName(Name):
         """
 
         if kwargs.get('allow_quoted_nicknames'):
-            args = [ x.strip() for x in args if not re.match(r'^[(]', x) ]
+            args = [x.strip() for x in args if not re.match(r'^[(]', x)]
         else:
-            args = [ x.strip() for x in args if not re.match(r'^[("]', x) ]
+            args = [x.strip() for x in args if not re.match(r'^[("]', x)]
 
         if len(args) > 2:
             self.detect_and_fix_two_part_surname(args)
@@ -263,8 +265,8 @@ class PersonName(Name):
         i = 0
         while i < len(args) - 1:
             if args[i].lower() in self.family_name_prefixes:
-                args[i] = ' '.join(args[i:i+2])
-                del(args[i+1])
+                args[i] = ' '.join(args[i:i + 2])
+                del (args[i + 1])
                 break
             else:
                 i += 1
@@ -322,7 +324,7 @@ class PersonName(Name):
     def capitalize_and_punctuate_initials(self, name_part):
         if self.is_only_initials(name_part):
             if '.' not in name_part:
-                return ''.join([ '{0}.'.format(x.upper()) for x in name_part])
+                return ''.join(['{0}.'.format(x.upper()) for x in name_part])
             else:
                 return name_part
         else:
@@ -330,12 +332,13 @@ class PersonName(Name):
 
     def primary_name_parts(self, include_middle=False):
         if include_middle:
-            return [ self.first, self.middle, self.last ]
+            return [self.first, self.middle, self.last]
         else:
-            return [ self.first, self.last ]
+            return [self.first, self.last]
 
     def as_dict(self):
-        return { 'first': self.first, 'middle': self.middle, 'last': self.last, 'honorific': self.honorific, 'suffix': self.suffix }
+        return {'first': self.first, 'middle': self.middle, 'last': self.last, 'honorific': self.honorific,
+                'suffix': self.suffix}
 
     def __repr__(self):
         return self.as_dict()
@@ -353,7 +356,8 @@ class PoliticalMetadata(object):
 
     def __str__(self):
         if self.party or self.state:
-            party_state = u"-".join([ x for x in [self.party, self.state] if x ]) # because presidential candidates are listed without a state
+            party_state = u"-".join([x for x in [self.party, self.state] if
+                                     x])  # because presidential candidates are listed without a state
             return unicode(u"{0} ({1})".format(unicode(self.name_str()), party_state)).encode('utf-8')
         else:
             return unicode(self.name_str()).encode('utf-8')
@@ -364,7 +368,6 @@ class PoliticianName(PoliticalMetadata, PersonName):
 
 
 class RunningMatesNames(PoliticalMetadata):
-
     def __init__(self, mate1, mate2):
         self.mate1 = mate1
         self.mate2 = mate2
@@ -376,7 +379,7 @@ class RunningMatesNames(PoliticalMetadata):
         return self.__str__()
 
     def mates(self):
-        return [ self.mate1, self.mate2 ]
+        return [self.mate1, self.mate2]
 
     def is_mixed_case(self):
         for mate in self.mates():
@@ -390,5 +393,3 @@ class RunningMatesNames(PoliticalMetadata):
             mate.case_name_parts()
 
         return self
-
-

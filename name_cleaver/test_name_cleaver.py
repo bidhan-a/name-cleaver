@@ -1,5 +1,5 @@
 from cleaver import PoliticianNameCleaver, OrganizationNameCleaver, \
-        IndividualNameCleaver, UnparseableNameException
+    IndividualNameCleaver, UnparseableNameException
 
 try:
     import unittest2 as unittest
@@ -8,7 +8,6 @@ except ImportError:
 
 
 class TestPoliticianNameCleaver(unittest.TestCase):
-
     def test_case_converts_in_non_mixed_case_names_only(self):
         self.assertEqual('Antonio dAlesio', str(PoliticianNameCleaver('Antonio dAlesio').parse()))
 
@@ -29,19 +28,23 @@ class TestPoliticianNameCleaver(unittest.TestCase):
         self.assertEqual('Albert Gore', str(PoliticianNameCleaver('Gore, Albert').parse()))
 
     def test_pile_it_on(self):
-        self.assertEqual('Milton Elmer McCullough, Jr.', str(PoliticianNameCleaver('Milton Elmer "Mac" McCullough, Jr (3)').parse()))
+        self.assertEqual('Milton Elmer McCullough, Jr.',
+                         str(PoliticianNameCleaver('Milton Elmer "Mac" McCullough, Jr (3)').parse()))
 
     def test_pile_it_on_two(self):
-        self.assertEqual('William Steve Southerland, II', str(PoliticianNameCleaver('William Steve Southerland  II (R)').parse()))
+        self.assertEqual('William Steve Southerland, II',
+                         str(PoliticianNameCleaver('William Steve Southerland  II (R)').parse()))
 
     def test_pile_it_on_three(self):
-        self.assertEqual('Edward Thomas O\'Donnell, Jr.', str(PoliticianNameCleaver('Edward Thomas O\'Donnell, Jr (D)').parse()))
+        self.assertEqual('Edward Thomas O\'Donnell, Jr.',
+                         str(PoliticianNameCleaver('Edward Thomas O\'Donnell, Jr (D)').parse()))
 
     def test_standardize_running_mate_names(self):
         self.assertEqual('John Kasich & Mary Taylor', str(PoliticianNameCleaver('Kasich, John & Taylor, Mary').parse()))
 
     def test_standardize_running_mate_names_with_slash(self):
-        self.assertEqual('Mitt Romney & Paul D. Ryan', str(PoliticianNameCleaver('ROMNEY, MITT / RYAN, PAUL D.').parse()))
+        self.assertEqual('Mitt Romney & Paul D. Ryan',
+                         str(PoliticianNameCleaver('ROMNEY, MITT / RYAN, PAUL D.').parse()))
 
     def test_we_dont_need_no_steeenking_nicknames(self):
         self.assertEqual('Robert M. McDonnell', str(PoliticianNameCleaver('McDonnell, Robert M (Bob)').parse()))
@@ -81,13 +84,17 @@ class TestPoliticianNameCleaver(unittest.TestCase):
         self.assertEqual(None, name.suffix)
 
     def test_with_metadata(self):
-        self.assertEqual('Charles Schumer (D-NY)', str(PoliticianNameCleaver('Charles Schumer').parse().plus_metadata('D', 'NY')))
+        self.assertEqual('Charles Schumer (D-NY)',
+                         str(PoliticianNameCleaver('Charles Schumer').parse().plus_metadata('D', 'NY')))
         self.assertEqual('Barack Obama (D)', str(PoliticianNameCleaver('Barack Obama').parse().plus_metadata('D', '')))
-        self.assertEqual('Charles Schumer (NY)', str(PoliticianNameCleaver('Charles Schumer').parse().plus_metadata('', 'NY')))
-        self.assertEqual('Jerry Leon Carroll', str(PoliticianNameCleaver('Jerry Leon Carroll').parse().plus_metadata('', '')))  # only this one guy is missing both at the moment
+        self.assertEqual('Charles Schumer (NY)',
+                         str(PoliticianNameCleaver('Charles Schumer').parse().plus_metadata('', 'NY')))
+        self.assertEqual('Jerry Leon Carroll', str(PoliticianNameCleaver('Jerry Leon Carroll').parse().plus_metadata('',
+                                                                                                                     '')))  # only this one guy is missing both at the moment
 
     def test_running_mates_with_metadata(self):
-        self.assertEqual('Ted Strickland & Lee Fischer (D-OH)', str(PoliticianNameCleaver('STRICKLAND, TED & FISCHER, LEE').parse().plus_metadata('D', 'OH')))
+        self.assertEqual('Ted Strickland & Lee Fischer (D-OH)',
+                         str(PoliticianNameCleaver('STRICKLAND, TED & FISCHER, LEE').parse().plus_metadata('D', 'OH')))
 
     def test_names_with_weird_parenthetical_stuff(self):
         self.assertEqual('Lynn Swann', str(PoliticianNameCleaver('SWANN, LYNN (COMMITTEE 1)').parse()))
@@ -99,7 +106,8 @@ class TestPoliticianNameCleaver(unittest.TestCase):
         self.assertEqual('Sean O\'Leary', str(PoliticianNameCleaver('SEAN O\'LEARY').parse()))
 
     def test_primary_name_parts(self):
-        self.assertEqual(['Robert', 'Geoff', 'Smith'], PoliticianNameCleaver('Smith, Robert Geoff').parse().primary_name_parts(include_middle=True))
+        self.assertEqual(['Robert', 'Geoff', 'Smith'],
+                         PoliticianNameCleaver('Smith, Robert Geoff').parse().primary_name_parts(include_middle=True))
         self.assertEqual(['Robert', 'Smith'], PoliticianNameCleaver('Smith, Robert Geoff').parse().primary_name_parts())
 
     def test_van_is_valid_first_name(self):
@@ -113,9 +121,9 @@ class TestPoliticianNameCleaver(unittest.TestCase):
 
 
 class TestOrganizationNameCleaver(unittest.TestCase):
-
     def test_capitalize_pac(self):
-        self.assertEqual('Nancy Pelosi Leadership PAC', str(OrganizationNameCleaver('NANCY PELOSI LEADERSHIP PAC').parse()))
+        self.assertEqual('Nancy Pelosi Leadership PAC',
+                         str(OrganizationNameCleaver('NANCY PELOSI LEADERSHIP PAC').parse()))
 
     def test_make_single_word_names_ending_in_pac_all_uppercase(self):
         self.assertEqual('ECEPAC', str(OrganizationNameCleaver('ECEPAC').parse()))
@@ -132,42 +140,53 @@ class TestOrganizationNameCleaver(unittest.TestCase):
         self.assertEqual('MacDonnell Douglas', str(OrganizationNameCleaver('MACDONNELL DOUGLAS').parse()))
 
     def test_dont_capitalize_just_anything_starting_with_mac(self):
-        self.assertEqual('Machinists/Aerospace Workers Union', str(OrganizationNameCleaver('MACHINISTS/AEROSPACE WORKERS UNION').parse()))
+        self.assertEqual('Machinists/Aerospace Workers Union',
+                         str(OrganizationNameCleaver('MACHINISTS/AEROSPACE WORKERS UNION').parse()))
 
     def test_expand(self):
         self.assertEqual('Raytheon Corporation', OrganizationNameCleaver('Raytheon Corp.').parse().expand())
-        self.assertEqual('Massachusetts Institute of Technology', OrganizationNameCleaver('Massachusetts Inst. of Technology').parse().expand())
+        self.assertEqual('Massachusetts Institute of Technology',
+                         OrganizationNameCleaver('Massachusetts Inst. of Technology').parse().expand())
 
     def test_expand_with_two_tokens_to_expand(self):
         self.assertEqual('Merck & Company Incorporated', OrganizationNameCleaver('Merck & Co., Inc.').parse().expand())
 
     def test_dont_strip_after_hyphens_too_soon_in_a_name(self):
-        self.assertEqual('US-Russia Business Council', OrganizationNameCleaver('US-Russia Business Council').parse().kernel())
+        self.assertEqual('US-Russia Business Council',
+                         OrganizationNameCleaver('US-Russia Business Council').parse().kernel())
         self.assertEqual('Wal-Mart Stores', OrganizationNameCleaver('Wal-Mart Stores, Inc.').parse().kernel())
         self.assertEqual('Williams-Sonoma', OrganizationNameCleaver('Williams-Sonoma, Inc.').parse().kernel())
-        self.assertEqual('Austin American-Statesman', OrganizationNameCleaver('Austin American-Statesman').parse().kernel())
+        self.assertEqual('Austin American-Statesman',
+                         OrganizationNameCleaver('Austin American-Statesman').parse().kernel())
 
         # these were new after the hyphen rewrite
-        self.assertEqual('Coca-Cola Company', OrganizationNameCleaver('Coca-Cola Co').parse().expand()) # used to return 'Coca'
-        self.assertEqual('Rolls-Royce PLC', OrganizationNameCleaver('Rolls-Royce PLC').parse().expand()) # used to return 'Rolls'
+        self.assertEqual('Coca-Cola Company',
+                         OrganizationNameCleaver('Coca-Cola Co').parse().expand())  # used to return 'Coca'
+        self.assertEqual('Rolls-Royce PLC',
+                         OrganizationNameCleaver('Rolls-Royce PLC').parse().expand())  # used to return 'Rolls'
 
     def test_drop_postname_hyphen_phrases(self):
-        self.assertEqual('Lawyers For Better Government-Illinois', OrganizationNameCleaver('LAWYERS FOR BETTER GOVERNMENT-ILLINOIS').parse().without_extra_phrases())
-        self.assertEqual('Jobs Opportunity And Freedom Political Action Committee', OrganizationNameCleaver('JOBS OPPORTUNITY AND FREEDOM POLITICAL ACTION COMMITTEE - JOFPAC').parse().without_extra_phrases())
+        self.assertEqual('Lawyers For Better Government-Illinois', OrganizationNameCleaver(
+            'LAWYERS FOR BETTER GOVERNMENT-ILLINOIS').parse().without_extra_phrases())
+        self.assertEqual('Jobs Opportunity And Freedom Political Action Committee', OrganizationNameCleaver(
+            'JOBS OPPORTUNITY AND FREEDOM POLITICAL ACTION COMMITTEE - JOFPAC').parse().without_extra_phrases())
 
     def test_kernel(self):
         """
         Intended to get only the unique/meaningful words out of a name
         """
-        self.assertEqual('Massachusetts Technology', OrganizationNameCleaver('Massachusetts Inst. of Technology').parse().kernel())
-        self.assertEqual('Massachusetts Technology', OrganizationNameCleaver('Massachusetts Institute of Technology').parse().kernel())
+        self.assertEqual('Massachusetts Technology',
+                         OrganizationNameCleaver('Massachusetts Inst. of Technology').parse().kernel())
+        self.assertEqual('Massachusetts Technology',
+                         OrganizationNameCleaver('Massachusetts Institute of Technology').parse().kernel())
 
         self.assertEqual('Walsh', OrganizationNameCleaver('The Walsh Group').parse().kernel())
 
         self.assertEqual('Health Net', OrganizationNameCleaver('Health Net Inc').parse().kernel())
         self.assertEqual('Health Net', OrganizationNameCleaver('Health Net, Inc.').parse().kernel())
 
-        self.assertEqual('Distilled Spirits Council', OrganizationNameCleaver('Distilled Spirits Council of the U.S., Inc.').parse().kernel())
+        self.assertEqual('Distilled Spirits Council',
+                         OrganizationNameCleaver('Distilled Spirits Council of the U.S., Inc.').parse().kernel())
 
     def test_handles_empty_names(self):
         self.assertEqual('', str(OrganizationNameCleaver('').parse()))
@@ -234,7 +253,8 @@ class TestIndividualNameCleaver(unittest.TestCase):
         self.assertEqual('Kenneth L. Lay', self.cleave_to_str('LAY, KENNETH L MR & MRS'))
 
     def test_primary_name_parts(self):
-        self.assertEqual(['Robert', 'Geoff', 'Smith'], self.cleaver('Smith, Robert Geoff').parse().primary_name_parts(include_middle=True))
+        self.assertEqual(['Robert', 'Geoff', 'Smith'],
+                         self.cleaver('Smith, Robert Geoff').parse().primary_name_parts(include_middle=True))
         self.assertEqual(['Robert', 'Smith'], self.cleaver('Smith, Robert Geoff').parse().primary_name_parts())
 
     def test_initialed_first_name(self):
@@ -266,13 +286,12 @@ class TestIndividualNameCleaver(unittest.TestCase):
 
 
 class TestCapitalization(unittest.TestCase):
-
     def test_overrides_dumb_python_titlecasing_for_apostrophes(self):
-        self.assertEqual('Phoenix Women\'s Health Center', str(OrganizationNameCleaver('PHOENIX WOMEN\'S HEALTH CENTER').parse()))
+        self.assertEqual('Phoenix Women\'s Health Center',
+                         str(OrganizationNameCleaver('PHOENIX WOMEN\'S HEALTH CENTER').parse()))
 
 
 class TestOrganizationNameCleaverForIndustries(unittest.TestCase):
-
     def test_capitalizes_letter_after_slash(self):
         self.assertEqual('Health Services/Hmos', str(OrganizationNameCleaver('HEALTH SERVICES/HMOS').parse()))
         self.assertEqual('Lawyers/Law Firms', str(OrganizationNameCleaver('LAWYERS/LAW FIRMS').parse()))
@@ -283,34 +302,33 @@ class TestOrganizationNameCleaverForIndustries(unittest.TestCase):
 
 
 class TestUnicode(unittest.TestCase):
-
     def test_individual(self):
         self.assertEqual(u'Tobias F\u00fcnke'.encode('utf-8'),
-                str(IndividualNameCleaver(u'F\u00fcnke, Tobias').parse()))
+                         str(IndividualNameCleaver(u'F\u00fcnke, Tobias').parse()))
 
     def test_politician(self):
         self.assertEqual(u'Tobias F\u00fcnke'.encode('utf-8'),
-                str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse()))
+                         str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse()))
 
     def test_politician_plus_metadata(self):
         self.assertEqual(u'Tobias F\u00fcnke (D-CA)'.encode('utf-8'),
-                str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse().plus_metadata('D', 'CA')))
+                         str(PoliticianNameCleaver(u'F\u00fcnke, Tobias').parse().plus_metadata('D', 'CA')))
 
     def test_politician_running_mates(self):
         self.assertEqual(u'Tobias F\u00fcnke & Lindsay F\u00fcnke'.encode('utf-8'),
-                str(PoliticianNameCleaver(u'F\u00fcnke, Tobias & F\u00fcnke, Lindsay').parse()))
+                         str(PoliticianNameCleaver(u'F\u00fcnke, Tobias & F\u00fcnke, Lindsay').parse()))
 
     def test_running_mates_with_metadata(self):
         self.assertEqual(u'Ted Strickland & Le\u00e9 Fischer (D-OH)'.encode('utf-8'),
-                str(PoliticianNameCleaver(u'STRICKLAND, TED & FISCHER, LE\u00c9').parse().plus_metadata('D', 'OH')))
+                         str(PoliticianNameCleaver(u'STRICKLAND, TED & FISCHER, LE\u00c9').parse().plus_metadata('D',
+                                                                                                                 'OH')))
 
     def test_organization(self):
         self.assertEqual(u'\u00C6tna, Inc.'.encode('utf-8'),
-                str(OrganizationNameCleaver(u'\u00C6tna, Inc.').parse()))
+                         str(OrganizationNameCleaver(u'\u00C6tna, Inc.').parse()))
 
 
 class TestErrors(unittest.TestCase):
-
     def test_unparseable_politician_name(self):
         with self.assertRaises(UnparseableNameException):
             PoliticianNameCleaver("mr & mrs").parse()
@@ -320,33 +338,33 @@ class TestErrors(unittest.TestCase):
             IndividualNameCleaver("mr & mrs").parse()
 
     # this ought to have a test, but I'm not sure how to break this one.
-    #def test_unparseable_organization_name(self):
+    # def test_unparseable_organization_name(self):
     #    with self.assertRaises(UnparseableNameException):
     #        OrganizationNameCleaver("####!!!").parse()
 
     def test_parse_safe__individual(self):
         pass
-        #with self.assertRaises(UnparseableNameException):
+        # with self.assertRaises(UnparseableNameException):
         #    IndividualNameCleaver("BARDEN PHD J D, R CHRISTOPHER").parse()
 
-        #self.assertEqual('BARDEN PHD J D, R CHRISTOPHER', str(IndividualNameCleaver('BARDEN PHD J D, R CHRISTOPHER').parse(safe=True)))
+        # self.assertEqual('BARDEN PHD J D, R CHRISTOPHER', str(IndividualNameCleaver('BARDEN PHD J D, R CHRISTOPHER').parse(safe=True)))
 
-        #with self.assertRaises(UnparseableNameException):
+        # with self.assertRaises(UnparseableNameException):
         #    IndividualNameCleaver("gobbledy blah bloop!!!.p,.lcrg%%% #$<").parse()
 
-        #self.assertEqual('gobbledy blah bloop!!!.p,.lcrg%%% #$<', str(IndividualNameCleaver('gobbledy blah bloop!!!.p,.lcrg%%% #$<').parse(safe=True)))
+        # self.assertEqual('gobbledy blah bloop!!!.p,.lcrg%%% #$<', str(IndividualNameCleaver('gobbledy blah bloop!!!.p,.lcrg%%% #$<').parse(safe=True)))
 
     def test_parse_safe__politician(self):
         pass
-        #with self.assertRaises(UnparseableNameException):
+        # with self.assertRaises(UnparseableNameException):
         #    PoliticianNameCleaver("BARDEN PHD J D, R CHRISTOPHER").parse()
 
-        #self.assertEqual('BARDEN PHD J D, R CHRISTOPHER', str(PoliticianNameCleaver('BARDEN PHD J D, R CHRISTOPHER').parse(safe=True)))
+        # self.assertEqual('BARDEN PHD J D, R CHRISTOPHER', str(PoliticianNameCleaver('BARDEN PHD J D, R CHRISTOPHER').parse(safe=True)))
 
-        #with self.assertRaises(UnparseableNameException):
+        # with self.assertRaises(UnparseableNameException):
         #    PoliticianNameCleaver("gobbledy gook bah bah bloop!!!.p,.lcrg%%% #$<").parse()
 
-        #self.assertEqual('gobbledy gook bah bah bloop!!!.p,.lcrg%%% #$<', str(PoliticianNameCleaver('gobbledy gook bah bah bloop!!!.p,.lcrg%%% #$<').parse(safe=True)))
+        # self.assertEqual('gobbledy gook bah bah bloop!!!.p,.lcrg%%% #$<', str(PoliticianNameCleaver('gobbledy gook bah bah bloop!!!.p,.lcrg%%% #$<').parse(safe=True)))
 
     def test_parse_safe__organization(self):
         self.assertEqual('', OrganizationNameCleaver(None).parse(safe=True))
