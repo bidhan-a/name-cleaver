@@ -1,4 +1,4 @@
-from cleaver import PoliticianNameCleaver, OrganizationNameCleaver, \
+from .cleaver import PoliticianNameCleaver, OrganizationNameCleaver, \
     IndividualNameCleaver, UnparseableNameException
 from builtins import str
 
