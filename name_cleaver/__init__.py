@@ -1,1 +1,1 @@
-from cleaver import PoliticianNameCleaver, OrganizationNameCleaver, IndividualNameCleaver
+from .cleaver import PoliticianNameCleaver, OrganizationNameCleaver, IndividualNameCleaver

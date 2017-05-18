@@ -1,8 +1,8 @@
 import re
-from exception import UnparseableNameException
-from names import SUFFIX_RE, DEGREE_RE, PersonName, PoliticianName, RunningMatesNames, \
+from .exception import UnparseableNameException
+from .names import SUFFIX_RE, DEGREE_RE, PersonName, PoliticianName, RunningMatesNames, \
     OrganizationName
-from nicknames import NICKNAMES
+from .nicknames import NICKNAMES
 from builtins import str
 
 
